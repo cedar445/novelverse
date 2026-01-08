@@ -1,11 +1,20 @@
-<script setup></script>
-
 <template>
-  <h1>You did it!</h1>
-  <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
+  <div id="app" :class="store.theme">
+    <router-view />
+    <BottomNav v-if="showBottomNav" />
+  </div>
 </template>
 
-<style scoped></style>
+<script setup>
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+import BottomNav from '@/components/BottomNav.vue'
+import { useReaderStore } from '@/stores/reader'
+
+const store = useReaderStore()
+const route = useRoute()
+
+const showBottomNav = computed(() => {
+  return !route.path.startsWith('/read')
+})
+</script>

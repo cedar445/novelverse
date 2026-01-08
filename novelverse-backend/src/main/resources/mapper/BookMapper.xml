@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--mapper的namespace写dao即数据层的包-->
+<mapper namespace="org.example.novelverse.dao.BookDao">
+	<resultMap id="BookMap" type="org.example.novelverse.domain.Book">
+		<id column="id" property="id"/>
+		<result column="author_id" property="author_id"/>
+		<result column="name" property="name"/>
+		
+		<result column="tags"
+				property="tags"
+				typeHandler="org.example.novelverse.handler.StringListJsonTypeHandler"/>
+		
+		<result column="description" property="description"/>
+		<result column="file_path" property="file_path"/>
+	</resultMap>
+	
+	<insert id="insert">
+		insert into book (author_id,name,tags,description,file_path)
+		values (#{author_id},#{name},
+		#{tags, typeHandler=org.example.novelverse.handler.StringListJsonTypeHandler},
+		#{description},#{file_path})
+	</insert>
+	<update id="update">
+		update book
+		set author_id = #{author_id}, name = #{name},
+		tags = #{tags, typeHandler=org.example.novelverse.handler.StringListJsonTypeHandler},
+		description = #{description}, file_path =
+		#{file_path}
+		where id = #{id}
+	</update>
+	<delete id="delete">
+		delete from book
+		where id = #{id}
+	</delete>
+	<select id="getAll" resultMap="BookMap">
+		select * from book
+	</select>
+	<select id="getById" resultMap="BookMap">
+		select * from book where id = #{id}
+	</select>
+	<select id="getByName" resultMap="BookMap">
+		select * from book where name = #{name}
+	</select>
+</mapper>

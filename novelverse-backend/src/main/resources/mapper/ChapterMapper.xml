@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--mapper的namespace写dao即数据层的包-->
+<mapper namespace="org.example.novelverse.dao.ChapterDao">
+	<insert id="insert">
+		INSERT INTO chapter
+		(book_id, chapter_index, title, start_offset, end_offset)
+		VALUES
+		(#{book_id}, #{chapter_index}, #{title}, #{start_offset}, #{end_offset})
+	</insert>
+	
+	<delete id="deleteByBookId">
+		DELETE FROM chapter WHERE book_id = #{book_id}
+	</delete>
+	
+	<select id="getByBookId" resultType="org.example.novelverse.domain.Chapter">
+		SELECT *
+		FROM chapter
+		WHERE book_id = #{book_id}
+		ORDER BY chapter_index ASC
+	</select>
+	
+	<select id="getById" resultType="org.example.novelverse.domain.Chapter">
+		SELECT *
+		FROM chapter
+		WHERE id = #{id}
+	</select>
+
+
+</mapper>

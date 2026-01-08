@@ -50,7 +50,7 @@
 			<version>8.0.33</version>
 		</dependency>
 		
-		<!--spring core / context 相关以及 jdbc-->
+		<!--spring core / context 相关以及 jdbc 和 aop-->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
@@ -60,6 +60,11 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
 			<version>6.1.14</version>
+		</dependency>
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>1.9.22.1</version>
 		</dependency>
 		
 		<!--test相关不重要-->
@@ -74,6 +79,13 @@
 			<version>4.13.2</version>
 			<scope>test</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.5</version>
+		</dependency>
+	
 	</dependencies>
 	<build>
 		<finalName>novelverse-backend</finalName>
