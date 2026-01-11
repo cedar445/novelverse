@@ -1,5 +1,5 @@
 <template>
-  <div class="reader-page" :class="store.theme">
+  <div class="reader-page" :class="readerStore.theme">
     <!-- 顶部状态栏 -->
     <header class="reader-header">
       <span class="icon-btn back" @click="goBack">←</span>
@@ -8,7 +8,7 @@
     </header>
 
     <!-- 阅读正文 -->
-    <main class="reader" :style="{ fontSize: store.fontSize + 'px' }">
+    <main class="reader" :style="{ fontSize: readerStore.fontSize + 'px' }">
       <p v-for="(p, i) in currentChapter.content" :key="i" class="paragraph">
         {{ p }}
       </p>
@@ -75,10 +75,16 @@
           <div class="setting-item">
             <span>夜间模式</span>
             <div class="switch">
-              <button :class="{ active: store.theme === 'light' }" @click="store.theme = 'light'">
+              <button
+                :class="{ active: readerStore.theme === 'light' }"
+                @click="readerStore.theme = 'light'"
+              >
                 日间
               </button>
-              <button :class="{ active: store.theme === 'dark' }" @click="store.theme = 'dark'">
+              <button
+                :class="{ active: readerStore.theme === 'dark' }"
+                @click="readerStore.theme = 'dark'"
+              >
                 夜间
               </button>
             </div>
@@ -88,11 +94,15 @@
           <div class="setting-item">
             <span>字号大小</span>
             <div class="font-control">
-              <button @click="store.decreaseFont" :disabled="store.fontSize <= 14">A−</button>
+              <button @click="readerStore.decreaseFont" :disabled="readerStore.fontSize <= 14">
+                A−
+              </button>
 
-              <span>{{ store.fontSize }}px</span>
+              <span>{{ readerStore.fontSize }}px</span>
 
-              <button @click="store.increaseFont" :disabled="store.fontSize >= 28">A+</button>
+              <button @click="readerStore.increaseFont" :disabled="readerStore.fontSize >= 28">
+                A+
+              </button>
             </div>
           </div>
         </div>
@@ -106,7 +116,7 @@ import { useRouter } from 'vue-router'
 import { ref, computed } from 'vue'
 import { useReaderStore } from '@/stores/reader'
 
-const store = useReaderStore()
+const readerStore = useReaderStore()
 const router = useRouter()
 
 const goBack = () => {

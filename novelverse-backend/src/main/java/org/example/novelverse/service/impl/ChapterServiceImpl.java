@@ -21,17 +21,17 @@ public class ChapterServiceImpl implements ChapterService {
     }
 
     @Override
-    public void delete(int id) {
+    public void delete(Integer id) {
         chapterDao.deleteByBookId(id);
     }
 
     @Override
-    public List<Chapter> getByBookId(int book_id) {
+    public List<Chapter> getByBookId(Integer book_id) {
         return chapterDao.getByBookId(book_id);
     }
 
     @Override
-    public Chapter getById(int id) {
+    public Chapter getById(Integer id) {
         return chapterDao.getById(id);
     }
 }

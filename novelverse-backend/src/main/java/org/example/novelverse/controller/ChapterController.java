@@ -12,7 +12,7 @@ import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 
 @Controller
-@RequestMapping("/chapter")
+@RequestMapping("/chapters")
 public class ChapterController {
 
     @Autowired

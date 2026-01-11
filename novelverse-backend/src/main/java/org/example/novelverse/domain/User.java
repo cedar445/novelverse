@@ -3,7 +3,7 @@ package org.example.novelverse.domain;
 import java.util.List;
 
 public class User {
-    int id;
+    Integer id;
     String name;
     String password;
     String ifauthor;
@@ -25,11 +25,11 @@ public class User {
         this.password = password;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -48,5 +48,5 @@ public class User {
     public void setShelf(List<Integer> shelf) {
         this.shelf = shelf;
     }
-    
+
 }

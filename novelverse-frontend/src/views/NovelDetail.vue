@@ -1,5 +1,5 @@
 <template>
-  <div class="detail" :class="store.theme">
+  <div class="detail" :class="readerStore.theme">
     <!-- 顶部信息 -->
     <section class="header">
       <!-- 封面 -->
@@ -71,7 +71,7 @@
 import { useRoute, useRouter } from 'vue-router'
 import { useReaderStore } from '@/stores/reader'
 
-const store = useReaderStore()
+const readerStore = useReaderStore()
 
 const route = useRoute()
 const router = useRouter()

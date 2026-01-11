@@ -1,5 +1,5 @@
 <template>
-  <div class="home" :class="store.theme">
+  <div class="home" :class="readerStore.theme">
     <!-- 顶部 -->
     <header class="header">
       <h1 class="title">NovelVerse 书城</h1>
@@ -30,7 +30,7 @@ import { ref, computed } from 'vue'
 import { useReaderStore } from '@/stores/reader'
 import NovelCard from '@/components/NovelCard.vue'
 
-const store = useReaderStore()
+const readerStore = useReaderStore()
 
 const categories = ['全部', '玄幻', '科幻', '都市', '武侠', '悬疑']
 const activeCategory = ref('全部')

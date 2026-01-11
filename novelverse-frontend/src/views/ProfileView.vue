@@ -1,10 +1,10 @@
 <template>
-  <div class="settings" :class="store.theme">
+  <div class="settings" :class="readerStore.theme">
     <!-- 用户登录区域 -->
     <div class="profile-card">
-      <template v-if="user">
-        <img class="avatar" src="https://via.placeholder.com/96" />
-        <div class="nickname">{{ user.nickname }}</div>
+      <template v-if="userStore.username">
+        <div class="avatar placeholder">👤</div>
+        <div class="name">{{ userStore.username }}</div>
         <button class="logout" @click="logout">退出登录</button>
       </template>
 
@@ -20,26 +20,22 @@
         <div class="setting-left">
           <span class="setting-title">主题模式</span>
         </div>
-        <button class="theme-btn small" @click="toggleTheme">
+        <button class="normal-btn" :class="readerStore.theme" @click="toggleTheme">
           <span class="icon">
-            {{ store.theme === 'light' ? '🌙' : '☀️' }}
+            {{ readerStore.theme === 'light' ? ' 🌙 ' : ' ☀️ ' }}
           </span>
           <span class="label">
-            {{ store.theme === 'light' ? '夜间' : '日间' }}
+            {{ readerStore.theme === 'light' ? ' 夜间模式 ' : ' 日间模式 ' }}
           </span>
         </button>
       </div>
       <div class="setting-item">
         <div class="setting-left">
-          <span class="setting-title">其他</span>
+          <span class="setting-title">api调试</span>
         </div>
-        <button class="theme-btn small" @click="getUser">
-          <span class="icon">
-            {{ store.theme === 'light' ? '🌙' : '☀️' }}
-          </span>
-          <span class="label">
-            {{ store.theme === 'light' ? '夜间' : '日间' }}
-          </span>
+        <button class="normal-btn" :class="readerStore.theme" @click="testBooks">
+          <span class="icon"> ☆ </span>
+          <span class="label"> 操作按钮 </span>
         </button>
       </div>
     </div>
@@ -52,56 +48,70 @@
 import { ref, onMounted } from 'vue'
 import { useReaderStore } from '@/stores/reader'
 import LoginModal from '@/components/LoginModal.vue'
-import { test } from '@/api/user'
+// import { getUsers } from '@/api/user'
+// import { login } from '@/api/auth'
+import { useUserStore } from '@/stores/user'
+import { getBookById } from '@/api/book'
 
-const store = useReaderStore()
+const userStore = useUserStore()
+const readerStore = useReaderStore()
 
-const user = ref(null)
 const showLogin = ref(false)
-
-onMounted(() => {
-  const saved = localStorage.getItem('user')
-  if (saved) {
-    user.value = JSON.parse(saved)
-  }
-})
 
 const openLogin = () => {
   showLogin.value = true
 }
 
-const handleLogin = (u) => {
-  user.value = u
-  localStorage.setItem('user', JSON.stringify(u))
+const handleLogin = (payload) => {
+  userStore.login(payload)
   showLogin.value = false
 }
 
 const logout = () => {
-  localStorage.removeItem('user')
-  user.value = null
+  localStorage.removeItem('token')
+  localStorage.removeItem('username')
+  userStore.logout()
 }
 
 const toggleTheme = () => {
-  const next = store.theme === 'light' ? 'dark' : 'light'
-  store.theme = next
+  const next = readerStore.theme === 'light' ? 'dark' : 'light'
+  readerStore.theme = next
   localStorage.setItem('theme', next)
 }
+
 //api测试
-const getUser = () => {
-  test()
+
+// const getMyUsers = async () => {
+//   try {
+//     const res = await getUsers()
+//     console.log(res)
+//   } catch (err) {
+//     console.log(err)
+//   }
+// }
+const testBooks = async () => {
+  try {
+    const res = await getBookById(11)
+    console.log(res)
+  } catch (err) {
+    console.error(err)
+  }
 }
 
+/* ===============================
+   mount
+   =============================== */
 onMounted(() => {
   // 用户信息
-  const savedUser = localStorage.getItem('user')
-  if (savedUser) {
-    user.value = JSON.parse(savedUser)
-  }
+  // const savedUser = localStorage.getItem('username')
+  // if (savedUser) {
+  //   user.value = JSON.parse(savedUser)
+  // }
 
   // 主题兜底
   const savedTheme = localStorage.getItem('theme')
   if (savedTheme) {
-    store.theme = savedTheme
+    readerStore.theme = savedTheme
   }
 })
 </script>
@@ -152,8 +162,9 @@ onMounted(() => {
   background: linear-gradient(180deg, #1f2937, #111827);
   color: #e5e7eb;
 }
-
+/* =============================== */
 /* ===== 头像 ===== */
+/* =============================== */
 .avatar {
   width: 96px;
   height: 96px;
@@ -173,7 +184,7 @@ onMounted(() => {
 }
 
 /* ===== 文本 ===== */
-.nickname {
+.name {
   font-size: 18px;
   font-weight: 600;
   margin-bottom: 12px;
@@ -184,8 +195,9 @@ onMounted(() => {
   opacity: 0.9;
   margin-bottom: 16px;
 }
-
-/* ===== 按钮 ===== */
+/* =============================== */
+/* ===== login按钮 ===== */
+/* =============================== */
 .login,
 .logout {
   padding: 8px 26px;
@@ -203,7 +215,7 @@ onMounted(() => {
   transform: scale(0.94);
 }
 
-/* 日间按钮 */
+/* 日间login */
 .settings.light .login {
   background: #ffffff;
   color: #5f7cff;
@@ -214,8 +226,7 @@ onMounted(() => {
   background: rgba(255, 255, 255, 0.25);
   color: #ffffff;
 }
-
-/* 夜间按钮 */
+/* 夜间login */
 .settings.dark .login {
   background: #1f2937;
   color: #c7d2fe;
@@ -225,14 +236,15 @@ onMounted(() => {
   background: rgba(255, 255, 255, 0.12);
   color: #e5e7eb;
 }
-
+/* =============================== */
 /* ===== 主题切换 ===== */
+/* =============================== */
 .theme-switch {
   display: flex;
   justify-content: center;
   margin-top: 12px;
 }
-
+/*
 .theme-btn {
   display: inline-flex;
   align-items: center;
@@ -250,31 +262,51 @@ onMounted(() => {
 
 .theme-btn:active {
   transform: scale(0.95);
-}
+} */
 
 /* 日间 */
-.settings.light .theme-btn {
+/* .settings.light .theme-btn {
   background: #ffffff;
   color: #4f46e5;
   box-shadow: 0 6px 20px rgba(79, 70, 229, 0.15);
 }
 
 /* 夜间 */
-.settings.dark .theme-btn {
+/* .settings.dark .theme-btn {
   background: #1f2937;
   color: #e0e7ff;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
 }
+*/
+/* 日间 */
+/* .settings.light .theme-btn.small {
+  background: #eef2ff;
+  color: #4f46e5;
+} */
 
-.icon {
+/* 夜间 */
+/* .settings.dark .theme-btn.small {
+  background: #1f2937;
+  color: #c7d2fe;
+} */
+
+/* .theme-btn.small {
+  padding: 6px 14px;
+  font-size: 13px;
+  gap: 6px;
+} */
+
+/* .icon {
   font-size: 16px;
 }
 
 .label {
   font-weight: 500;
-}
+} */
 
+/* =============================== */
 /* ===== 设置列表 ===== */
+/* =============================== */
 .setting-list {
   display: flex;
   border-radius: 14px;
@@ -296,7 +328,7 @@ onMounted(() => {
     box-shadow 0.25s,
     transform 0.15s;
 }
-
+/* =============================== */
 /* 日间 */
 .settings.light .setting-list {
   background: #ffffff;
@@ -308,7 +340,7 @@ onMounted(() => {
   background: #111827;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
 }
-
+/* =============================== */
 /* 日间模式 */
 .settings.light .setting-item {
   background: #ffffff;
@@ -321,11 +353,7 @@ onMounted(() => {
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
 }
 
-.setting-title {
-  font-size: 15px;
-  font-weight: 500;
-}
-
+/* =============================== */
 /* 日间文字 */
 .settings.light .setting-title {
   color: #111827;
@@ -336,21 +364,112 @@ onMounted(() => {
   color: #e5e7eb;
 }
 
-.theme-btn.small {
-  padding: 6px 14px;
-  font-size: 13px;
-  gap: 6px;
+.setting-title {
+  font-size: 15px;
+  font-weight: 500;
 }
 
-/* 日间 */
-.settings.light .theme-btn.small {
-  background: #eef2ff;
-  color: #4f46e5;
+/* =============================== */
+/* 按钮 */
+/* =============================== */
+.normal-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 10px 14px;
+  border-radius: 10px;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  cursor: pointer;
+  user-select: none;
+
+  border: 1px solid transparent;
+  background-clip: padding-box;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.15s ease;
+
+  min-width: 125px;
 }
 
-/* 夜间 */
-.settings.dark .theme-btn.small {
+/* ---------- icon ---------- */
+.normal-btn .icon {
+  font-size: 16px;
+  line-height: 1;
+  opacity: 0.85;
+}
+
+/* ---------- label ---------- */
+.normal-btn .label {
+  white-space: nowrap;
+}
+
+/* ================= 日间模式 ================= */
+.normal-btn.light {
+  color: #1f2937;
+  background: linear-gradient(180deg, #ffffff, #f9fafb);
+  border-color: #e5e7eb;
+
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.normal-btn.light:hover {
+  background: #ffffff;
+  border-color: #d1d5db;
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  transform: translateY(-1px);
+}
+
+.normal-btn.light:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.normal-btn.light:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4);
+}
+
+/* ================= 夜间模式 ================= */
+.normal-btn.dark {
+  color: #e5e7eb;
+  background: linear-gradient(180deg, #1f2937, #111827);
+  border-color: #374151;
+
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.normal-btn.dark:hover {
   background: #1f2937;
-  color: #c7d2fe;
+  border-color: #4b5563;
+
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.55);
+
+  transform: translateY(-1px);
+}
+
+.normal-btn.dark:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+}
+
+.normal-btn.dark:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.5);
+}
+/* 禁用态 */
+.normal-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 </style>

@@ -4,7 +4,7 @@ import axios from 'axios'
 const request = axios.create({
   // 后端接口地址
   baseURL: 'http://localhost:8080/novelverse-backend',
-  timeout: 10000,
+  timeout: 5000,
 })
 
 // 请求拦截器：在请求发出前执行
@@ -15,6 +15,7 @@ request.interceptors.request.use(
     // 如果 token 存在，则统一加到请求头中
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
+      // console.log('已添加token到请求头' + token)
     }
     return config
   },
@@ -29,11 +30,12 @@ request.interceptors.response.use(
     // 后端返回的数据
     const res = response.data
     // 根据后端约定判断是否成功
-    if (String(res.code).endsWith('2')) {
+    if (String(res.code).endsWith('0')) {
       console.error(res.msg || '请求失败')
       return Promise.reject(res)
     }
-    return res.data
+    //返回res,不在拦截的时候处理.data
+    return res
   },
   (error) => {
     // HTTP 层面的错误

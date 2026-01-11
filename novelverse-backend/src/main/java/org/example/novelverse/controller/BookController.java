@@ -1,5 +1,6 @@
 package org.example.novelverse.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.example.novelverse.domain.Book;
 import org.example.novelverse.domain.Chapter;
 import org.example.novelverse.service.BookService;
@@ -11,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-@RequestMapping("/book")
+@RequestMapping("/books")
 public class BookController {
     @Autowired
     BookService bookService;
@@ -21,7 +22,10 @@ public class BookController {
 
 
     @PostMapping
-    public Result insertBook(@RequestBody Book book) {
+    public Result insertBook(@RequestBody Book book, HttpServletRequest request) {
+        if (book.getAuthor_id() == null) {
+            book.setAuthor_id((Integer) request.getAttribute("userId"));
+        }
         bookService.insert(book);
         return new Result(Code.INSERT_OK, book);
     }
@@ -52,13 +56,13 @@ public class BookController {
 
     // ① 上传 txt，返回 bookId
     @PostMapping("/upload")
-    public int upload(@RequestParam("file") MultipartFile file, @RequestParam("author_id") int author_id) throws Exception {
-        return bookService.uploadTxt(file, author_id);
+    public Result upload(@RequestParam("file") MultipartFile file, HttpServletRequest request) throws Exception {
+        return new Result(Code.INSERT_OK, bookService.uploadTxt(file, (Integer) request.getAttribute("userId")));
     }
 
     // ② 根据 bookId 获取章节列表
     @GetMapping("/{bookId}/chapters")
-    public List<Chapter> listChapters(@PathVariable int bookId) {
-        return chapterService.getByBookId(bookId);
+    public Result listChapters(@PathVariable int bookId) {
+        return new Result(Code.GET_OK, chapterService.getByBookId(bookId));
     }
 }

@@ -1,5 +1,5 @@
 <template>
-  <div :class="['shelf', store.theme]">
+  <div :class="['shelf', readerStore.theme]">
     <!-- 顶部标题 -->
     <header class="shelf-header">
       <h1>我的书架</h1>
@@ -22,7 +22,7 @@
         <div class="info">
           <h3 class="title">{{ b.title }}</h3>
           <p class="author">{{ b.author }}</p>
-          <p class="progress">已读 {{ b.progress }}%</p>
+          <p class="description">{{ b.description }}</p>
         </div>
       </div>
     </section>
@@ -30,30 +30,42 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
 import { useReaderStore } from '@/stores/reader'
+// import { useUserStore } from '@/stores/user'
+import { getShelf } from '@/api/shelf'
+import { getBookById } from '@/api/book'
 
-const store = useReaderStore()
+const readerStore = useReaderStore()
+// const userStore = useUserStore()
+const books = ref([])
 
-const books = [
-  {
-    id: 1,
-    title: '星渊纪元',
-    author: 'Aether',
-    progress: 42,
-  },
-  {
-    id: 2,
-    title: '黑月之下',
-    author: 'Noctis',
-    progress: 18,
-  },
-  {
-    id: 3,
-    title: '都市回响',
-    author: 'Echo',
-    progress: 73,
-  },
-]
+const getUserShelf = async () => {
+  try {
+    // console.log('获取书架中...')
+
+    // 1. 获取书架 id 数组
+    const res = await getShelf() // 返回 [1,2,3]
+    const shelfIds = res.data
+    // console.log('书籍id', shelfIds)
+
+    // 2. 并行查询所有书籍
+    const booksData = await Promise.all(shelfIds.map((id) => getBookById(id)))
+    console.log('书籍详情', booksData)
+
+    // ✅ 赋值给 books.value
+    books.value = booksData
+
+    return books
+  } catch (err) {
+    console.error('获取书架或书籍失败', err)
+  }
+}
+
+onMounted(async () => {
+  // 模拟获取书架数据
+  await getUserShelf()
+})
 </script>
 
 <style scoped>
@@ -198,7 +210,7 @@ const books = [
   margin-bottom: 6px;
 }
 
-.progress {
+.description {
   font-size: 12px;
   opacity: 0.6;
 }

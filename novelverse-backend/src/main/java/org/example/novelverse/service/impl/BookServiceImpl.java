@@ -35,12 +35,12 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void delete(int id) {
+    public void delete(Integer id) {
         bookDao.delete(id);
     }
 
     @Override
-    public Book getById(int id) {
+    public Book getById(Integer id) {
         return bookDao.getById(id);
     }
 
@@ -50,7 +50,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public int uploadTxt(MultipartFile file, int author_id) throws Exception {
+    public Integer uploadTxt(MultipartFile file, Integer author_id) throws Exception {
 
         // 1. 保存 txt 文件
         String path = "E:/Projects/Knowledges/java/Spring相关/springProject/" +

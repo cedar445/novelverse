@@ -1,50 +1,50 @@
 package org.example.novelverse.domain;
 
 public class Chapter {
-    int id;
-    int book_id;
-    int chapter_index;
+    Integer id;
+    Integer book_id;
+    Integer chapter_index;
     String title;
-    int start_offset;
-    int end_offset;
+    Integer start_offset;
+    Integer end_offset;
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public int getBook_id() {
+    public Integer getBook_id() {
         return book_id;
     }
 
-    public void setBook_id(int book_id) {
+    public void setBook_id(Integer book_id) {
         this.book_id = book_id;
     }
 
-    public int getChapter_index() {
+    public Integer getChapter_index() {
         return chapter_index;
     }
 
-    public void setChapter_index(int chapter_index) {
+    public void setChapter_index(Integer chapter_index) {
         this.chapter_index = chapter_index;
     }
 
-    public int getStart_offset() {
+    public Integer getStart_offset() {
         return start_offset;
     }
 
-    public void setStart_offset(int start_offset) {
+    public void setStart_offset(Integer start_offset) {
         this.start_offset = start_offset;
     }
 
-    public int getEnd_offset() {
+    public Integer getEnd_offset() {
         return end_offset;
     }
 
-    public void setEnd_offset(int end_offset) {
+    public void setEnd_offset(Integer end_offset) {
         this.end_offset = end_offset;
     }
 

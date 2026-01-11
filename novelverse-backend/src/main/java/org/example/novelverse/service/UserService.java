@@ -9,9 +9,11 @@ public interface UserService {
 
     public void update(User user);
 
-    public void delete(int id);
+    public void delete(Integer id);
 
-    public User getById(int id);
+    public User getById(Integer id);
+
+    public User getByName(String name);
 
     public List<User> getAll();
 }

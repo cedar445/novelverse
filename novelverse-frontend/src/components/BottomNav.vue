@@ -1,5 +1,5 @@
 <template>
-  <nav class="bottom-nav" :class="store.theme">
+  <nav class="bottom-nav" :class="readerStore.theme">
     <div
       v-for="item in navs"
       :key="item.path"
@@ -17,7 +17,7 @@ import { useReaderStore } from '@/stores/reader'
 
 const router = useRouter()
 const route = useRoute()
-const store = useReaderStore()
+const readerStore = useReaderStore()
 
 const navs = [
   { label: '书城', path: '/', icon: '📚' },

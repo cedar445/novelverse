@@ -12,11 +12,11 @@ public interface BookService {
 
     public void update(Book book);
 
-    public void delete(int id);
+    public void delete(Integer id);
 
-    public Book getById(int id);
+    public Book getById(Integer id);
 
     public List<Book> getAll();
 
-    public int uploadTxt(MultipartFile file, int author_id) throws Exception;
+    public Integer uploadTxt(MultipartFile file, Integer author_id) throws Exception;
 }

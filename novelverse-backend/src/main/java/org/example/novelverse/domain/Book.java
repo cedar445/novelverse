@@ -4,26 +4,26 @@ package org.example.novelverse.domain;
 import java.util.List;
 
 public class Book {
-    int id;
-    int author_id;
+    Integer id;
+    Integer author_id;
     String name;
     List<String> tags;
     String description;
     String file_path;
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public int getAuthor_id() {
+    public Integer getAuthor_id() {
         return author_id;
     }
 
-    public void setAuthor_id(int author_id) {
+    public void setAuthor_id(Integer author_id) {
         this.author_id = author_id;
     }
 
@@ -58,5 +58,5 @@ public class Book {
     public void setFile_path(String file_path) {
         this.file_path = file_path;
     }
-    
+
 }
