@@ -7,6 +7,7 @@ export const getChaptersByBookId = async (bookId) => {
 }
 
 export const getChapterContentById = async (id) => {
-  const res = await request.get(`/chapters/${id}/content`)
-  return res
+  return request.get(`/chapters/${id}/content`, {
+    responseType: 'text', // ← 关键
+  })
 }

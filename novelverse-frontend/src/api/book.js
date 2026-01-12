@@ -43,6 +43,8 @@ export const deleteBook = async (id) => {
 }
 
 export const uploadLocalTxt = async (formData) => {
+  console.log(formData.get('file'))
+
   const res = await request.post('/books/upload', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',

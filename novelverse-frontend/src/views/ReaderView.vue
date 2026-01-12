@@ -202,6 +202,7 @@ const selectChapter = (chapter) => {
 
   currentChapter.value = target
   showCatalog.value = false
+  console.log('选择章节:', target)
   scrollToTop()
 }
 
@@ -215,6 +216,8 @@ const prevChapter = () => {
 const nextChapter = () => {
   if (currentChapterIndex.value < plainChapters.value.length - 1) {
     currentChapter.value = plainChapters.value[currentChapterIndex.value + 1]
+    // console.log('当前章节索引:', currentChapterIndex.value)
+    // console.log('章节总数:', plainChapters.value.length)
     scrollToTop()
   }
 }
@@ -232,12 +235,13 @@ onMounted(async () => {
   // 初始化章节内容等
   console.log('初始化')
   chapters.value = (await getChaptersByBookId(BookId)).data
-  console.log('章节列表', chapters.value)
-  console.log('当前章节', chapters.value[0])
+  // console.log('章节列表', chapters.value)
+  // console.log('当前章节', chapters.value[0])
 
   plainChapters.value = await Promise.all(
     chapters.value.map(async (chapter) => {
-      const raw = (await getChapterContentById(chapter.id)).data
+      const raw = await getChapterContentById(chapter.id)
+      // console.log('章节原始内容', raw)
       return {
         id: chapter.id,
         title: chapter.title,
@@ -247,7 +251,6 @@ onMounted(async () => {
   )
 
   currentChapter.value = plainChapters.value[0]
-  console.log('章节内容', currentChapter.value.content)
 })
 </script>
 

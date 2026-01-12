@@ -4,7 +4,7 @@ import axios from 'axios'
 const request = axios.create({
   // 后端接口地址
   baseURL: 'http://localhost:8080/novelverse-backend',
-  timeout: 5000,
+  timeout: 50000,
 })
 
 // 请求拦截器：在请求发出前执行

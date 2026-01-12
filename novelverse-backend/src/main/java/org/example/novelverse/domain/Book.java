@@ -12,6 +12,7 @@ public class Book {
     String file_path;
     long word_count;
     long chapter_count;
+    String charset;
 
     public Integer getId() {
         return id;
@@ -75,5 +76,13 @@ public class Book {
 
     public void setChapter_count(long chapter_count) {
         this.chapter_count = chapter_count;
+    }
+
+    public String getCharset() {
+        return charset;
+    }
+
+    public void setCharset(String charset) {
+        this.charset = charset;
     }
 }

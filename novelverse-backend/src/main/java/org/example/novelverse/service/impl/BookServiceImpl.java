@@ -6,6 +6,7 @@ import org.example.novelverse.dao.ChapterDao;
 import org.example.novelverse.utils.TxtChapterParser;
 import org.example.novelverse.domain.Book;
 import org.example.novelverse.service.BookService;
+import org.example.novelverse.utils.TxtParseResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -82,12 +83,13 @@ public class BookServiceImpl implements BookService {
         Book newBook = bookDao.getByName(file.getOriginalFilename());
 
         // 3. 解析章节
-        long[] nums = new long[]{};
-        nums = txtChapterParser.parse(path, newBook.getId());
+        TxtParseResult txtParseResult = txtChapterParser.parse(path, newBook.getId());
 
         //4.插入字数
-        newBook.setWord_count(nums[0]);
-        newBook.setChapter_count(nums[1]);
+        newBook.setWord_count(txtParseResult.getWord_count());
+        newBook.setChapter_count(txtParseResult.getChapter_count());
+        newBook.setCharset(txtParseResult.getCharset());
+//        System.out.println(newBook);
         bookDao.update(newBook);
 
         return newBook.getId();

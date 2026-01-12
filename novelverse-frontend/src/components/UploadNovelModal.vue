@@ -99,6 +99,7 @@ const submit = async () => {
 
   try {
     loading.value = true
+
     const newBookId = (await uploadLocalTxt(form)).data
     //加入书架
     const user = (await getUserByName(userStore.username)).data
