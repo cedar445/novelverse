@@ -2,6 +2,7 @@ package org.example.novelverse.service.impl;
 
 import com.mysql.cj.xdevapi.JsonArray;
 import org.example.novelverse.dao.BookDao;
+import org.example.novelverse.dao.ChapterDao;
 import org.example.novelverse.utils.TxtChapterParser;
 import org.example.novelverse.domain.Book;
 import org.example.novelverse.service.BookService;
@@ -23,6 +24,9 @@ public class BookServiceImpl implements BookService {
     @Autowired
     BookDao bookDao;
     @Autowired
+    ChapterDao chapterDao;
+
+    @Autowired
     TxtChapterParser txtChapterParser;
 
     @Override
@@ -37,6 +41,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public void delete(Integer id) {
+        chapterDao.deleteByBookId(id);
         bookDao.delete(id);
     }
 
@@ -57,10 +62,11 @@ public class BookServiceImpl implements BookService {
         String path = "E:/Projects/Knowledges/java/Spring相关/springProject/" +
                 "novelverse/novelverse-backend/src/main/resources/novels/" + file.getOriginalFilename();
 
-        Path targetPath = Paths.get(path);
-        if (Files.exists(targetPath)) {
-            return -1;
-        }
+        //是否可以覆盖
+//        Path targetPath = Paths.get(path);
+//        if (Files.exists(targetPath)) {
+//            return -1;
+//        }
         file.transferTo(new File(path));
 
         // 2. 插入 book
@@ -76,7 +82,7 @@ public class BookServiceImpl implements BookService {
         Book newBook = bookDao.getByName(file.getOriginalFilename());
 
         // 3. 解析章节
-        int[] nums = new int[]{};
+        long[] nums = new long[]{};
         nums = txtChapterParser.parse(path, newBook.getId());
 
         //4.插入字数

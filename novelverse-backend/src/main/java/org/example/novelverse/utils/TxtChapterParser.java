@@ -8,8 +8,11 @@ import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.*;
 
 @Component
@@ -21,43 +24,66 @@ public class TxtChapterParser {
     private final Pattern CHAPTER_PATTERN =
             Pattern.compile("^(第\\s*[0-9一二三四五六七八九十百千]+\\s*章.*)$");
 
-    public int[] parse(String path, int bookId) throws Exception {
+    public long[] parse(String path, int bookId) throws Exception {
 
-        BufferedReader reader = new BufferedReader(
-                new InputStreamReader(Files.newInputStream(Paths.get(path)), StandardCharsets.UTF_8)
-        );
+        RandomAccessFile raf = new RandomAccessFile(path, "r");
 
-        String line;
-        int offset = 0;
+        long offset = 0;
         int chapterIndex = 0;
 
         Chapter current = null;
+        String line;
 
-        while ((line = reader.readLine()) != null) {
-            Matcher matcher = CHAPTER_PATTERN.matcher(line);
+        List<Chapter> buffer = new ArrayList<>();
+        final int BATCH_SIZE = 100;
+
+        while ((line = raf.readLine()) != null) {
+
+            String utf8Line =
+                    new String(line.getBytes("ISO-8859-1"), StandardCharsets.UTF_8);
+
+            Matcher matcher = CHAPTER_PATTERN.matcher(utf8Line);
 
             if (matcher.matches()) {
+
+                long chapterStart = offset;
+
+                // ✅ 只有这里，才结束上一章
                 if (current != null) {
-                    current.setEnd_offset(offset);
-                    chapterService.insert(current);
+                    current.setEnd_offset(chapterStart);
+                    buffer.add(current);
+                }
+
+                // ✅ 批量入库（只在 buffer 满时）
+                if (buffer.size() >= BATCH_SIZE) {
+                    chapterService.batchInsert(buffer);
+                    buffer.clear();
                 }
 
                 current = new Chapter();
                 current.setBook_id(bookId);
                 current.setChapter_index(chapterIndex++);
-                current.setTitle(line);
-                current.setStart_offset(offset);
+                current.setTitle(utf8Line);
+                current.setStart_offset(chapterStart);
             }
 
-            offset += line.length() + 1; // +换行
+            // ✅ 每一行都只做一件事：更新 offset
+            offset = raf.getFilePointer();
         }
 
+        // 🔚 处理最后一章
         if (current != null) {
             current.setEnd_offset(offset);
-            chapterService.insert(current);
+            buffer.add(current);
         }
 
-        reader.close();
-        return new int[]{offset, chapterIndex};
+        // 🔚 插入剩余章节
+        if (!buffer.isEmpty()) {
+            chapterService.batchInsert(buffer);
+        }
+
+        raf.close();
+        return new long[]{offset, chapterIndex};
     }
+
 }

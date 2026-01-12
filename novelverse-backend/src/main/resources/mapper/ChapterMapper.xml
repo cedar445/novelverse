@@ -27,6 +27,17 @@
 		FROM chapter
 		WHERE id = #{id}
 	</select>
-
-
+	
+	<insert id="batchInsert">
+		INSERT INTO chapter
+		(book_id, chapter_index, title, start_offset, end_offset)
+		VALUES
+		<foreach collection="list" item="c" separator=",">
+			(#{c.book_id},
+			#{c.chapter_index},
+			#{c.title},
+			#{c.start_offset},
+			#{c.end_offset})
+		</foreach>
+	</insert>
 </mapper>

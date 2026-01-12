@@ -7,9 +7,11 @@ import java.util.List;
 public interface ChapterService {
     public void insert(Chapter chapter);
 
-    public void delete(Integer id);
+    public void deleteByBookId(Integer id);
 
     public List<Chapter> getByBookId(Integer book_id);
 
     public Chapter getById(Integer id);
+
+    public void batchInsert(List<Chapter> chapters);
 }

@@ -5,8 +5,8 @@ public class Chapter {
     Integer book_id;
     Integer chapter_index;
     String title;
-    Integer start_offset;
-    Integer end_offset;
+    long start_offset;
+    long end_offset;
 
     public Integer getId() {
         return id;
@@ -32,19 +32,19 @@ public class Chapter {
         this.chapter_index = chapter_index;
     }
 
-    public Integer getStart_offset() {
+    public long getStart_offset() {
         return start_offset;
     }
 
-    public void setStart_offset(Integer start_offset) {
+    public void setStart_offset(long start_offset) {
         this.start_offset = start_offset;
     }
 
-    public Integer getEnd_offset() {
+    public long getEnd_offset() {
         return end_offset;
     }
 
-    public void setEnd_offset(Integer end_offset) {
+    public void setEnd_offset(long end_offset) {
         this.end_offset = end_offset;
     }
 

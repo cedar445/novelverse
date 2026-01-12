@@ -10,8 +10,8 @@ public class Book {
     List<String> tags;
     String description;
     String file_path;
-    Integer word_count;
-    Integer chapter_count;
+    long word_count;
+    long chapter_count;
 
     public Integer getId() {
         return id;
@@ -61,19 +61,19 @@ public class Book {
         this.file_path = file_path;
     }
 
-    public Integer getWord_count() {
+    public long getWord_count() {
         return word_count;
     }
 
-    public void setWord_count(Integer word_count) {
+    public void setWord_count(long word_count) {
         this.word_count = word_count;
     }
 
-    public Integer getChapter_count() {
+    public long getChapter_count() {
         return chapter_count;
     }
 
-    public void setChapter_count(Integer chapter_count) {
+    public void setChapter_count(long chapter_count) {
         this.chapter_count = chapter_count;
     }
 }

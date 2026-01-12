@@ -1,46 +1,49 @@
 <template>
-  <div class="reader-page" :class="readerStore.theme">
+  <div class="reader-page" :class="readerStore.theme" v-if="currentChapter">
     <!-- 顶部状态栏 -->
-    <header class="reader-header">
-      <span class="icon-btn back" @click="goBack">←</span>
-      <span class="status">{{ currentChapter.title }}</span>
-      <span class="icon-btn more">⋮</span>
-    </header>
-
+    <transition name="header-slide">
+      <header class="reader-header" v-show="showUI">
+        <span class="icon-btn back" @click="goBack">←</span>
+        <span class="status">{{ currentChapter.title }}</span>
+        <span class="icon-btn more">⋮</span>
+      </header>
+    </transition>
     <!-- 阅读正文 -->
-    <main class="reader" :style="{ fontSize: readerStore.fontSize + 'px' }">
+
+    <main class="reader" :style="{ fontSize: readerStore.fontSize + 'px' }" @click="toggleUI">
       <p v-for="(p, i) in currentChapter.content" :key="i" class="paragraph">
         {{ p }}
       </p>
     </main>
 
     <!-- 底部控制栏 -->
-    <footer class="reader-footer">
-      <!-- 翻章 -->
-      <div class="nav-row">
-        <button
-          class="nav-btn"
-          :class="{ disabled: currentChapterIndex === 0 }"
-          @click="prevChapter"
-        >
-          上一章
-        </button>
-        <button
-          class="nav-btn"
-          :class="{ disabled: currentChapterIndex === chapters.length - 1 }"
-          @click="nextChapter"
-        >
-          下一章
-        </button>
-      </div>
+    <transition name="footer-slide">
+      <footer class="reader-footer" v-show="showUI">
+        <!-- 翻章 -->
+        <div class="nav-row">
+          <button
+            class="nav-btn"
+            :class="{ disabled: currentChapterIndex === 0 }"
+            @click="prevChapter"
+          >
+            上一章
+          </button>
+          <button
+            class="nav-btn"
+            :class="{ disabled: currentChapterIndex === chapters.length - 1 }"
+            @click="nextChapter"
+          >
+            下一章
+          </button>
+        </div>
 
-      <!-- 功能 -->
-      <div class="tool-row">
-        <button class="tool-btn left-btn" @click="toggleCatalog">目录</button>
-        <button class="tool-btn right-btn" @click="showSetting = true">设置</button>
-      </div>
-    </footer>
-
+        <!-- 功能 -->
+        <div class="tool-row">
+          <button class="tool-btn left-btn" @click="toggleCatalog">目录</button>
+          <button class="tool-btn right-btn" @click="showSetting = true">设置</button>
+        </div>
+      </footer>
+    </transition>
     <!-- 目录 -->
     <transition name="catalog-slide">
       <aside v-if="showCatalog" class="catalog" @click.self="showCatalog = false">
@@ -53,7 +56,7 @@
             v-for="chapter in chapters"
             :key="chapter.id"
             class="catalog-item"
-            :class="{ active: currentChapter.id === chapter.id }"
+            :class="{ active: currentChapter && currentChapter.id === chapter.id }"
             @click="selectChapter(chapter)"
           >
             <span class="chapter-title">{{ chapter.title }}</span>
@@ -112,20 +115,36 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
-import { ref, computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { ref, computed, onMounted } from 'vue'
 import { useReaderStore } from '@/stores/reader'
+import { getChaptersByBookId, getChapterContentById } from '@/api/chapter'
 
 const readerStore = useReaderStore()
 const router = useRouter()
+const route = useRoute()
+
+const BookId = route.params.id
 
 const goBack = () => {
   router.back()
 }
 const showSetting = ref(false)
-
 const showCatalog = ref(false)
+const showUI = ref(true)
 
+let uiLock = false
+
+const toggleUI = () => {
+  if (uiLock || showCatalog.value || showSetting.value) return
+
+  uiLock = true
+  showUI.value = !showUI.value
+
+  setTimeout(() => {
+    uiLock = false
+  }, 300)
+}
 const chapters = ref([
   {
     id: 1,
@@ -164,11 +183,13 @@ const chapters = ref([
     ],
   },
 ])
+const plainChapters = ref([])
 
-const currentChapter = ref(chapters.value[0])
+const currentChapter = ref(null)
 
 const currentChapterIndex = computed(() => {
-  return chapters.value.findIndex((chapter) => chapter.id === currentChapter.value.id)
+  if (!currentChapter.value) return -1
+  return plainChapters.value.findIndex((chapter) => chapter.id === currentChapter.value.id)
 })
 
 const toggleCatalog = () => {
@@ -176,30 +197,107 @@ const toggleCatalog = () => {
 }
 
 const selectChapter = (chapter) => {
-  currentChapter.value = chapter
+  const target = plainChapters.value.find((c) => c.id === chapter.id)
+  if (!target) return
+
+  currentChapter.value = target
   showCatalog.value = false
+  scrollToTop()
 }
 
 const prevChapter = () => {
   if (currentChapterIndex.value > 0) {
-    currentChapter.value = chapters.value[currentChapterIndex.value - 1]
+    currentChapter.value = plainChapters.value[currentChapterIndex.value - 1]
+    scrollToTop()
   }
 }
 
 const nextChapter = () => {
-  if (currentChapterIndex.value < chapters.value.length - 1) {
-    currentChapter.value = chapters.value[currentChapterIndex.value + 1]
+  if (currentChapterIndex.value < plainChapters.value.length - 1) {
+    currentChapter.value = plainChapters.value[currentChapterIndex.value + 1]
+    scrollToTop()
   }
 }
+
+const scrollToTop = () => {
+  requestAnimationFrame(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'instant', // 或 'smooth'
+    })
+  })
+}
+
+onMounted(async () => {
+  // 初始化章节内容等
+  console.log('初始化')
+  chapters.value = (await getChaptersByBookId(BookId)).data
+  console.log('章节列表', chapters.value)
+  console.log('当前章节', chapters.value[0])
+
+  plainChapters.value = await Promise.all(
+    chapters.value.map(async (chapter) => {
+      const raw = (await getChapterContentById(chapter.id)).data
+      return {
+        id: chapter.id,
+        title: chapter.title,
+        content: raw.split(/\r?\n/).filter((p) => p.trim() !== ''),
+      }
+    }),
+  )
+
+  currentChapter.value = plainChapters.value[0]
+  console.log('章节内容', currentChapter.value.content)
+})
 </script>
 
 <style scoped>
+/* ===================ui动画=================== */
+/* ===== Header 动画 ===== */
+.header-slide-enter-active,
+.header-slide-leave-active {
+  transition: all 0.25s ease;
+}
+
+.header-slide-enter-from,
+.header-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-100%);
+}
+
+.header-slide-enter-to,
+.header-slide-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reader {
+  cursor: pointer;
+}
+
 .reader-page {
   min-height: 100vh;
   background: #0f0f0f;
   color: #cfcfcf;
   padding-top: 56px;
   padding-bottom: 96px;
+}
+/* ===== Footer 动画 ===== */
+.footer-slide-enter-active,
+.footer-slide-leave-active {
+  transition: all 0.25s ease;
+}
+
+.footer-slide-enter-from,
+.footer-slide-leave-to {
+  opacity: 0;
+  transform: translateY(100%);
+}
+
+.footer-slide-enter-to,
+.footer-slide-leave-from {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* 顶部栏 */

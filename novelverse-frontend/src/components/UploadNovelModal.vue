@@ -50,10 +50,13 @@
 <script setup>
 import { ref } from 'vue'
 import { useReaderStore } from '@/stores/reader'
-// import { uploadNovel } from '@/api/book'
+import { uploadLocalTxt } from '@/api/book'
+import { getUserByName, updateUser } from '@/api/user'
+import { useUserStore } from '@/stores/user'
 
 const emit = defineEmits(['close', 'success'])
 const readerStore = useReaderStore()
+const userStore = useUserStore()
 
 const description = ref('')
 const tagInput = ref('')
@@ -96,7 +99,13 @@ const submit = async () => {
 
   try {
     loading.value = true
-    // await uploadNovel(form)
+    const newBookId = (await uploadLocalTxt(form)).data
+    //加入书架
+    const user = (await getUserByName(userStore.username)).data
+    console.log(user)
+    user.shelf.push(newBookId)
+    await updateUser(user)
+
     emit('success')
     close()
   } catch {

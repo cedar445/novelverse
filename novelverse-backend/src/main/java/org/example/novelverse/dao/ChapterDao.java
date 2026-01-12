@@ -14,5 +14,5 @@ public interface ChapterDao {
 
     List<Chapter> getByBookId(int book_id);
 
-
+    void batchInsert(List<Chapter> chapters);
 }

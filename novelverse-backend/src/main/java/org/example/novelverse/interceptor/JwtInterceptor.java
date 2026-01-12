@@ -9,17 +9,14 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
 public class JwtInterceptor implements HandlerInterceptor {
-
     @Override
     public boolean preHandle(HttpServletRequest request,
                              HttpServletResponse response,
                              Object handler) throws Exception {
-
         // 1. 放行 OPTIONS（否则前端直接挂）
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
             return true;
         }
-
         // 2. 读取 Authorization
         String auth = request.getHeader("Authorization");
 
@@ -29,9 +26,7 @@ public class JwtInterceptor implements HandlerInterceptor {
             response.getWriter().write("{\"msg\":\"未登录\"}");
             return false;
         }
-
         String token = auth.substring(7);
-
         try {
             Claims claims = JwtUtil.parseToken(token);
 

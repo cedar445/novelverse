@@ -10,8 +10,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/chapters")
 public class ChapterController {
 
@@ -21,9 +22,15 @@ public class ChapterController {
     @Autowired
     private BookService bookService;
 
+    @GetMapping("/{id}")
+    public Result getChaptersByBoodId(@PathVariable("id") int id) {
+        List<Chapter> chapters = chapterService.getByBookId(id);
+        return new Result(Code.GET_OK, chapters);
+    }
+
     // ③ 获取章节正文
     @GetMapping("/{id}/content")
-    public String read(@PathVariable int id) throws Exception {
+    public Result read(@PathVariable("id") int id) throws Exception {
 
         Chapter chapter = chapterService.getById(id);
         Book book = bookService.getById(chapter.getBook_id());
@@ -32,12 +39,11 @@ public class ChapterController {
         raf.seek(chapter.getStart_offset());
 
         byte[] buf = new byte[
-                chapter.getEnd_offset() - chapter.getStart_offset()
+                Math.toIntExact(chapter.getEnd_offset() - chapter.getStart_offset())
                 ];
         raf.read(buf);
         raf.close();
-
-        return new String(buf, StandardCharsets.UTF_8);
+        return new Result(Code.GET_OK, new String(buf, StandardCharsets.UTF_8));
     }
 }
 

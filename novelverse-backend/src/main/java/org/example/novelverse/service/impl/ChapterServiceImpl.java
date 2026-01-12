@@ -21,9 +21,10 @@ public class ChapterServiceImpl implements ChapterService {
     }
 
     @Override
-    public void delete(Integer id) {
+    public void deleteByBookId(Integer id) {
         chapterDao.deleteByBookId(id);
     }
+
 
     @Override
     public List<Chapter> getByBookId(Integer book_id) {
@@ -33,5 +34,11 @@ public class ChapterServiceImpl implements ChapterService {
     @Override
     public Chapter getById(Integer id) {
         return chapterDao.getById(id);
+    }
+
+    @Override
+    public void batchInsert(List<Chapter> chapters) {
+        if (chapters == null || chapters.isEmpty()) return;
+        chapterDao.batchInsert(chapters);
     }
 }
