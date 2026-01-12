@@ -1,5 +1,6 @@
 package org.example.novelverse.service.impl;
 
+import com.mysql.cj.xdevapi.JsonArray;
 import org.example.novelverse.dao.BookDao;
 import org.example.novelverse.utils.TxtChapterParser;
 import org.example.novelverse.domain.Book;
@@ -50,7 +51,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Integer uploadTxt(MultipartFile file, Integer author_id) throws Exception {
+    public Integer uploadTxt(MultipartFile file, List<String> tags, String description, Integer author_id) throws Exception {
 
         // 1. 保存 txt 文件
         String path = "E:/Projects/Knowledges/java/Spring相关/springProject/" +
@@ -66,13 +67,22 @@ public class BookServiceImpl implements BookService {
         Book book = new Book();
         book.setAuthor_id(author_id);
         book.setName(file.getOriginalFilename());
+        book.setTags(tags);
+        book.setDescription(description);
         book.setFile_path(path);
+
         bookDao.insert(book);
 
         Book newBook = bookDao.getByName(file.getOriginalFilename());
 
         // 3. 解析章节
-        txtChapterParser.parse(path, newBook.getId());
+        int[] nums = new int[]{};
+        nums = txtChapterParser.parse(path, newBook.getId());
+
+        //4.插入字数
+        newBook.setWord_count(nums[0]);
+        newBook.setChapter_count(nums[1]);
+        bookDao.update(newBook);
 
         return newBook.getId();
     }

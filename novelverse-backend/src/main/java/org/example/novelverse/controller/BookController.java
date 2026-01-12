@@ -31,7 +31,10 @@ public class BookController {
     }
 
     @PutMapping
-    public Result updateBook(@RequestBody Book book) {
+    public Result updateBook(@RequestBody Book book, HttpServletRequest request) {
+        if (book.getAuthor_id() == null) {
+            book.setAuthor_id((Integer) request.getAttribute("userId"));
+        }
         bookService.update(book);
         return new Result(Code.UPDATE_OK, book);
     }
@@ -56,8 +59,20 @@ public class BookController {
 
     // ① 上传 txt，返回 bookId
     @PostMapping("/upload")
-    public Result upload(@RequestParam("file") MultipartFile file, HttpServletRequest request) throws Exception {
-        return new Result(Code.INSERT_OK, bookService.uploadTxt(file, (Integer) request.getAttribute("userId")));
+    public Result upload(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("tags") List<String> tags,
+            @RequestParam("description") String description,
+            HttpServletRequest request) throws Exception {
+
+        return new Result(Code.INSERT_OK,
+                bookService.uploadTxt(
+                        file,
+                        tags,
+                        description,
+                        (Integer) request.getAttribute("userId")
+                )
+        );
     }
 
     // ② 根据 bookId 获取章节列表

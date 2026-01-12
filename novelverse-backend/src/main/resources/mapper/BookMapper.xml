@@ -15,20 +15,22 @@
 		
 		<result column="description" property="description"/>
 		<result column="file_path" property="file_path"/>
+		<result column="word_count" property="word_count"/>
+		<result column="chapter_count" property="chapter_count"/>
 	</resultMap>
 	
 	<insert id="insert">
-		insert into book (author_id,name,tags,description,file_path)
+		insert into book (author_id,name,tags,description,file_path,word_count,chapter_count)
 		values (#{author_id},#{name},
 		#{tags, typeHandler=org.example.novelverse.handler.StringListJsonTypeHandler},
-		#{description},#{file_path})
+		#{description},#{file_path},#{word_count},#{chapter_count})
 	</insert>
 	<update id="update">
 		update book
 		set author_id = #{author_id}, name = #{name},
 		tags = #{tags, typeHandler=org.example.novelverse.handler.StringListJsonTypeHandler},
-		description = #{description}, file_path =
-		#{file_path}
+		description = #{description}, file_path = #{file_path},
+		word_count = #{word_count}, chapter_count = #{chapter_count}
 		where id = #{id}
 	</update>
 	<delete id="delete">

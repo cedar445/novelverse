@@ -38,10 +38,20 @@
           <span class="label"> 操作按钮 </span>
         </button>
       </div>
+      <div class="setting-item">
+        <div class="setting-left">
+          <span class="setting-title">本地小说上传</span>
+        </div>
+        <button class="normal-btn" :class="readerStore.theme" @click="openUpload">
+          <span class="icon"> ☆ </span>
+          <span class="label"> 上传小说 </span>
+        </button>
+      </div>
     </div>
   </div>
 
   <LoginModal v-if="showLogin" @close="showLogin = false" @success="handleLogin" />
+  <UploadNovelModal v-if="showUpload" @close="showUpload = false" @success="handleUpload" />
 </template>
 
 <script setup>
@@ -52,11 +62,13 @@ import LoginModal from '@/components/LoginModal.vue'
 // import { login } from '@/api/auth'
 import { useUserStore } from '@/stores/user'
 import { getBookById } from '@/api/book'
+import UploadNovelModal from '@/components/UploadNovelModal.vue'
 
 const userStore = useUserStore()
 const readerStore = useReaderStore()
 
 const showLogin = ref(false)
+const showUpload = ref(false)
 
 const openLogin = () => {
   showLogin.value = true
@@ -79,6 +91,13 @@ const toggleTheme = () => {
   localStorage.setItem('theme', next)
 }
 
+const openUpload = () => {
+  showUpload.value = true
+}
+
+const handleUpload = () => {
+  console.log('上传小说')
+}
 //api测试
 
 // const getMyUsers = async () => {

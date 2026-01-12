@@ -14,13 +14,13 @@
 
     <!-- 书架列表 -->
     <section v-else class="grid">
-      <div v-for="b in books" :key="b.id" class="book-card">
+      <div v-for="b in books" :key="b.id" class="book-card" @click="openBook(b)">
         <div class="cover">
-          <span class="placeholder">{{ b.title[0] }}</span>
+          <span class="placeholder">{{ b.name[0] }}</span>
         </div>
 
         <div class="info">
-          <h3 class="title">{{ b.title }}</h3>
+          <h3 class="title">{{ b.name }}</h3>
           <p class="author">{{ b.author }}</p>
           <p class="description">{{ b.description }}</p>
         </div>
@@ -35,10 +35,15 @@ import { useReaderStore } from '@/stores/reader'
 // import { useUserStore } from '@/stores/user'
 import { getShelf } from '@/api/shelf'
 import { getBookById } from '@/api/book'
+import { useNovelStore } from '@/stores/currentNovel'
+import { useRouter } from 'vue-router'
 
 const readerStore = useReaderStore()
+const novelStore = useNovelStore()
 // const userStore = useUserStore()
 const books = ref([])
+
+const router = useRouter()
 
 const getUserShelf = async () => {
   try {
@@ -51,7 +56,7 @@ const getUserShelf = async () => {
 
     // 2. 并行查询所有书籍
     const booksData = await Promise.all(shelfIds.map((id) => getBookById(id)))
-    console.log('书籍详情', booksData)
+    // console.log('书籍详情', booksData)
 
     // ✅ 赋值给 books.value
     books.value = booksData
@@ -60,6 +65,12 @@ const getUserShelf = async () => {
   } catch (err) {
     console.error('获取书架或书籍失败', err)
   }
+}
+
+const openBook = (book) => {
+  novelStore.setNovel(book)
+  console.log('打开书籍:', book)
+  router.push(`/novel/${book.id}`)
 }
 
 onMounted(async () => {

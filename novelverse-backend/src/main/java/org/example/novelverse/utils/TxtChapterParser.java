@@ -21,7 +21,7 @@ public class TxtChapterParser {
     private final Pattern CHAPTER_PATTERN =
             Pattern.compile("^(第\\s*[0-9一二三四五六七八九十百千]+\\s*章.*)$");
 
-    public void parse(String path, int bookId) throws Exception {
+    public int[] parse(String path, int bookId) throws Exception {
 
         BufferedReader reader = new BufferedReader(
                 new InputStreamReader(Files.newInputStream(Paths.get(path)), StandardCharsets.UTF_8)
@@ -58,5 +58,6 @@ public class TxtChapterParser {
         }
 
         reader.close();
+        return new int[]{offset, chapterIndex};
     }
 }

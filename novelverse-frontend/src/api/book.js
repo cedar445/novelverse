@@ -16,9 +16,11 @@ export const getBookById = async (id) => {
 
   return {
     id: d.id,
-    title: d.name,
+    name: d.name,
     author: author.data.name,
+    tags: d.tags,
     description: d.description,
+    file_path: d.file_path,
   }
 }
 

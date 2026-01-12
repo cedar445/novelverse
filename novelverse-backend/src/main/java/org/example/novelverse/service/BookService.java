@@ -18,5 +18,5 @@ public interface BookService {
 
     public List<Book> getAll();
 
-    public Integer uploadTxt(MultipartFile file, Integer author_id) throws Exception;
+    public Integer uploadTxt(MultipartFile file, List<String> tags, String description, Integer author_id) throws Exception;
 }
