@@ -13,10 +13,23 @@ public class JwtInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request,
                              HttpServletResponse response,
                              Object handler) throws Exception {
+        String method = request.getMethod();
+        String uri = request.getRequestURI();
+
         // 1. 放行 OPTIONS（否则前端直接挂）
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
             return true;
         }
+
+        // ===== 1. 放行 GET /books /chapters =====
+        if ("GET".equalsIgnoreCase(method)) {
+            System.out.println(uri);
+            // 放行除了 /users /shelf 的 GET
+            if (!uri.matches(".*(/users|/shelf)(/.*)?")) {
+                return true; // 放行
+            }
+        }
+
         // 2. 读取 Authorization
         String auth = request.getHeader("Authorization");
 

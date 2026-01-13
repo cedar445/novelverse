@@ -213,6 +213,9 @@ onMounted(async () => {
   font-size: 15px;
   font-weight: 600;
   margin-bottom: 4px;
+  white-space: nowrap; /* 不换行 */
+  overflow: hidden; /* 超出隐藏 */
+  text-overflow: ellipsis; /* 显示省略号 */
 }
 
 .author {

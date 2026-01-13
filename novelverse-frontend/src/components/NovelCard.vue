@@ -1,32 +1,37 @@
 <template>
-  <div class="card" @click="go">
+  <div class="card" @click="openBook(props.novel)">
     <!-- <div class="cover">
       <span class="placeholder">Novel</span>
     </div> -->
 
     <div class="info">
-      <h3 class="title">{{ novel.title }}</h3>
-      <p class="author">{{ novel.author }}</p>
+      <h3 class="title">{{ props.novel.name }}</h3>
+      <p class="author">{{ props.novel.author }}</p>
     </div>
   </div>
 </template>
 
 <script setup>
 import { useRouter } from 'vue-router'
-
+import { useNovelStore } from '@/stores/currentNovel'
 const props = defineProps({
   novel: Object,
 })
 
 const router = useRouter()
-const go = () => {
-  router.push(`/novel/${props.novel.id}`)
+const novelStore = useNovelStore()
+
+const openBook = (book) => {
+  novelStore.setNovel(book)
+  console.log('打开书籍:', book)
+  router.push(`/novel/${book.id}`)
 }
 </script>
 
 <style scoped>
 .card {
-  max-width: 720px;
+  width: calc(40% - 8px);
+  max-width: 300px;
   width: 100%;
   border-radius: 12px;
   background: #55afd9;

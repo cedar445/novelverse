@@ -30,12 +30,12 @@ public class ChapterController {
     private BookService bookService;
 
     @GetMapping("/{id}")
-    public Result getChaptersByBoodId(@PathVariable("id") int id) {
+    public Result getChaptersByBookId(@PathVariable("id") int id) {
         List<Chapter> chapters = chapterService.getByBookId(id);
         return new Result(Code.GET_OK, chapters);
     }
 
-    // ③ 获取章节正文
+    //  获取章节正文
     @GetMapping(value = "/{id}/content", produces = "text/plain; charset=UTF-8")
     public ResponseEntity<String> read(@PathVariable("id") int id) throws Exception {
 
@@ -94,7 +94,8 @@ public class ChapterController {
         }
     }
 
-    @GetMapping(value = "/{id}/content111", produces = "text/plain; charset=UTF-8")
+    //获取指定章节内容
+    @GetMapping(value = "/{id}/contentById", produces = "text/plain; charset=UTF-8")
     public ResponseEntity<String> getChapterContent(@PathVariable("id") int id) throws Exception {
 
         Chapter chapter = chapterService.getById(id);

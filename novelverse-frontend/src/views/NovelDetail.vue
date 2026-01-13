@@ -50,7 +50,7 @@
     <section class="intro">
       <h2>作品简介</h2>
       <p>
-        天才被废，修为尽失；世人讥笑日暮，我独饮月华。 当我从坠落中爬出，这虚假的永恒之夜，该醒了。
+        {{ plainBook.description }}
       </p>
     </section>
 
@@ -98,7 +98,7 @@ const read = () => {
 }
 
 onMounted(() => {
-  // console.log('小说详情:', book.value)
+  console.log('小说详情:', book.value)
   plainBook.value = {
     id: unref(book.value.id),
     name: unref(book.value.name),
